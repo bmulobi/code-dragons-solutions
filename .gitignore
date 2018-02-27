@@ -1,3 +1,5 @@
 .idea/
 .DS_Store
 solution-venv/
+test.py
+app/__pycache__/

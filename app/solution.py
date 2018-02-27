@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+import modes
+
 pizza = []
 lines = None
 
@@ -15,11 +17,93 @@ def get_file_contents(filename):
         lines = file.read().strip().split('\n')
     return lines
 
-def check_slice(min, slice):
-    flat_slice =
-    return
 
-lines = get_file_contents("medium.in")
+def get_start_indices(start_point, rows, cols):
+    if start_point == "TL":
+        start_row = 0
+        start_col = 0
+    elif start_point == "TR":
+        start_row = 0
+        start_col = cols - 1
+    elif start_point == "BL":
+        start_row = rows - 1
+        start_col = 0
+    else:
+        start_row = rows - 1
+        start_col = cols - 1
+
+    return (start_row, start_col)
+
+def tl_horizontal_right(shapes, rows, cols, pizza, min, max):
+    for shape in shapes:
+        # cut from top left horizontally
+        slices = []
+        num_rows = int(shape[0])
+        num_cols = int(shape[1])
+        start_row = 0
+        end_row = num_rows
+
+        horizontal_steps = int(math.floor(cols / num_cols))
+        vertical_steps = int(math.floor(rows / num_rows))
+
+        for v_step in range(0, vertical_steps):
+            start_col = 0
+            end_col = num_cols
+
+            invalid_slice = False
+
+            for h_step in range(0, horizontal_steps):
+                slice = pizza[start_row:end_row, start_col:end_col]
+                print(slice)
+
+                unique, counts = np.unique(slice, return_counts=True)
+
+                if len(unique) < 2 or (counts[0] < min or counts[1] < min):
+                    invalid_slice = True
+                    break
+                else:
+                    slices.append((start_row, start_col, end_row - 1, end_col - 1))
+
+                if h_step < horizontal_steps - 1:
+                    start_col = end_col
+                    end_col += num_cols
+
+            if invalid_slice:
+                slices.clear()
+                break
+            else:
+                if v_step < vertical_steps - 1:
+                    start_row = end_row
+                    end_row += num_rows
+
+        # test remaining cells for slice validity
+        if end_col < cols:
+            # try with slices of size range min * 2 to max + 1
+
+            for size in range(min * 2, max + 1):
+                if rows % size == 0:
+                    for vstep in range(int(math.ceil(rows / size))):
+
+                else:
+                    continue
+
+
+
+
+
+            print("cols unsuccess - ", shape, end_col)
+
+        if end_row < rows:
+            untouched_rows = rows - end_row
+
+
+            print("rows unsuccess - ", shape, end_row)
+
+        if end_row == rows and end_col == cols:
+            print("Success ", shape, slices)
+            break
+
+lines = get_file_contents("example.in")
 
 if lines:
     for index in range(len(lines)):
@@ -57,37 +141,15 @@ if lines:
 
                 shapes.append(get_slice_shape(quotient, num, fits))
 
+    print(shapes)
+    # exit(0)
     # use various shapes to attempt for max_slices (the goal)
-    for shape in shapes:
-        # def cut_slices(shape):
-        num_rows = int(shape[0])
-        num_cols = int(shape[1])
-        start_row = 0
-        end_row = num_rows
-
-        horizontal_steps = int(math.floor(cols / num_cols))
-        vertical_steps = int(math.floor(rows / num_rows))
-
-        for v_step in range(0, vertical_steps):
-            start_col = 0
-            end_col = num_cols
-            
-            for h_step in range(0, horizontal_steps):
-                slice = pizza[start_row:end_row, start_col:end_col]
-
-                is_ok = check_slice(slice)
-
-                start_col = end_col
-                end_col += num_cols
-
-            start_row = end_row
-            end_row += num_rows
-
-        break
+    tl_horizontal_right(shapes, rows, cols, pizza, min, max)
 
 
-        #for
-        # cut from top left horizontally
+
+
+
 
 
 
